@@ -4,5 +4,3 @@
 - Discord: ``xdglory (main)`` ``fvew (alt)``
 ### about me
 nothing to know about me
-
-bye lol
