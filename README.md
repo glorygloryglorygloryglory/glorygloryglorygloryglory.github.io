@@ -1,4 +1,4 @@
-**glory.rocks**
+**hi i'm glory**
 ### contact me
 - Roblox: [glorygIoryglory](https://www.roblox.com/users/93730259/profile)
 - Discord: ``xdglory (main)`` ``fvew (alt)``
