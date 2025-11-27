@@ -4,3 +4,5 @@
 - discord: ``conjuncts (main)`` ``fvew (alt)``
 ### yes i know this site sucks
 im using github for this cause im lazy to ask ai to make me a site
+
+external soon maybe 👀
