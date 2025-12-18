@@ -9,6 +9,17 @@
 </head>
 <body>
 
+  <!-- click to enter -->
+  <div id="enter">
+    <span>click to enter</span>
+  </div>
+
+  <!-- music -->
+  <audio id="bg-music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- snow -->
   <canvas id="snow"></canvas>
 
   <main class="container">
@@ -19,23 +30,25 @@
     </section>
 
     <section class="about">
-      <p>
-        i dont really do anything
-      </p>
+      <h2>about</h2>
+      <p>i dont really do anything</p>
     </section>
 
     <section class="interests">
+      <h2>interests</h2>
       <ul>
-        <li>i dunno..</li>
+        <li>idunno..</li>
       </ul>
     </section>
 
-    <section class="find me here">
+    <section class="links">
+      <h2>find me here</h2>
+
       <a href="https://www.roblox.com/users/93730259/profile" target="_blank">
         roblox @glorygioryglory
       </a>
 
-      <a href="#" title="discord: conjuncts">
+      <a href="https://discord.com/users/conjuncts" target="_blank">
         discord @conjuncts
       </a>
 
@@ -50,6 +63,17 @@
   </main>
 
   <script>
+    /* click to enter */
+    const enter = document.getElementById("enter");
+    const music = document.getElementById("bg-music");
+
+    enter.addEventListener("click", () => {
+      enter.classList.add("hide");
+      music.volume = 0.25;
+      music.play();
+    });
+
+    /* snow animation */
     const canvas = document.getElementById("snow");
     const ctx = canvas.getContext("2d");
 
@@ -88,7 +112,6 @@
 
       requestAnimationFrame(draw);
     }
-
     draw();
   </script>
 
