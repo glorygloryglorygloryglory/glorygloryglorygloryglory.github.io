@@ -130,3 +130,9 @@ footer {
     font-size: 2.2rem;
   }
 }
+
+.nolink {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: #e6e6f0;
+}
