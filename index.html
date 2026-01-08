@@ -75,32 +75,18 @@ const backgroundDiv = document.getElementById("background");
    MUSIC
 ===================== */
 const tracks = [
-  "music/song1.ogg",
-  "music/song2.ogg",
-  "music/song3.ogg",
-  "music/song4.ogg",
-  "music/song5.ogg",
-  "music/song6.ogg",
-  "music/song7.ogg",
-  "music/song8.ogg",
-  "music/song9.ogg",
-  "music/song10.ogg",
-  "music/song11.ogg"
+  "music/song1.ogg","music/song2.ogg","music/song3.ogg","music/song4.ogg",
+  "music/song5.ogg","music/song6.ogg","music/song7.ogg","music/song8.ogg",
+  "music/song9.ogg","music/song10.ogg","music/song11.ogg"
 ];
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
-music.volume = 0.05;
+music.volume = 0.05; // softer volume
 
 /* =====================
    BACKGROUND
 ===================== */
-const backgrounds = [
-  "backgrounds/bg1.png",
-  "backgrounds/bg2.png",
-  "backgrounds/bg3.png",
-  "backgrounds/bg4.png"
-];
-backgroundDiv.style.backgroundImage =
-  `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
+const backgrounds = ["backgrounds/bg1.png","backgrounds/bg2.png","backgrounds/bg3.png","backgrounds/bg4.png"];
+backgroundDiv.style.backgroundImage = `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
 
 /* =====================
    CANVAS RESIZE
@@ -118,7 +104,7 @@ resize();
 ===================== */
 const flakes = Array.from({ length: 120 }, () => ({
   x: Math.random() * w,
-  y: Math.random() * h + 5,
+  y: Math.random() * h + 5, // add 5 to prevent dot at top-left
   r: Math.random() * 3 + 1,
   d: Math.random() * 0.6 + 0.3
 }));
@@ -129,7 +115,6 @@ let zoomScale = 1;
 function drawSnow() {
   ctx.clearRect(0, 0, w, h);
 
-  // Draw each flake individually to avoid stray dots
   flakes.forEach(f => {
     ctx.beginPath();
     ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
@@ -137,7 +122,6 @@ function drawSnow() {
     ctx.fill();
   });
 
-  // Move flakes
   flakes.forEach(f => {
     f.y += f.d * beatVelocity;
     if (f.y > h) {
@@ -146,9 +130,7 @@ function drawSnow() {
     }
   });
 
-  // Apply background zoom
   backgroundDiv.style.transform = `scale(${zoomScale})`;
-
   requestAnimationFrame(drawSnow);
 }
 
@@ -170,13 +152,10 @@ function setupBeat() {
 
   function tick() {
     analyser.getByteFrequencyData(data);
-    const avg = data.reduce((a, b) => a + b, 0) / data.length;
+    const avg = data.reduce((a,b) => a+b,0) / data.length;
 
-    // Snow speed reacts to bass
-    beatVelocity = 0.5 + avg / 150; 
-
-    // Background zoom reacts to bass
-    zoomScale = 1 + avg / 1500; // more noticeable zoom
+    beatVelocity = 0.5 + avg / 150;
+    zoomScale = 1 + avg / 1500;
 
     requestAnimationFrame(tick);
   }
@@ -195,7 +174,7 @@ enter.addEventListener("click", async () => {
   try {
     await music.play();
     setupBeat();
-  } catch (e) {
+  } catch(e) {
     console.log("Audio blocked:", e);
   }
 
