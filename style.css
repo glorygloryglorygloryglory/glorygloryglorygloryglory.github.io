@@ -5,6 +5,9 @@
   font-family: system-ui, sans-serif;
 }
 
+/* =====================
+   BASE
+===================== */
 body {
   background: #08080f;
   color: #e6e6f0;
@@ -13,7 +16,9 @@ body {
   position: relative;
 }
 
-/* background */
+/* =====================
+   BACKGROUND
+===================== */
 #background {
   position: fixed;
   inset: 0;
@@ -23,10 +28,12 @@ body {
   background-position: center;
   filter: blur(14px);
   z-index: 0;
-  transition: transform 0.1s ease; /* faster for beat */
+  transition: transform 0.1s ease;
 }
 
-/* snow */
+/* =====================
+   SNOW
+===================== */
 #snow {
   position: fixed;
   inset: 0;
@@ -35,7 +42,9 @@ body {
   transition: opacity 1s ease;
 }
 
-/* container with glassy effect */
+/* =====================
+   CONTAINER (GLASS)
+===================== */
 .container {
   position: relative;
   z-index: 2;
@@ -44,12 +53,13 @@ body {
   padding: 70px 40px;
   text-align: center;
 
-  /* glass effect */
-  background: rgba(20, 20, 25, 0.25); /* more transparent, glassy */
+  background: rgba(20, 20, 25, 0.25);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   border-radius: 22px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25); /* softer shadow */
+
+  /* VERY soft shadow (not wonky) */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 
   opacity: 0;
   transform: translateY(20px);
@@ -61,16 +71,60 @@ body {
   transform: translateY(0);
 }
 
-/* links styling */
+/* =====================
+   HERO
+===================== */
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.tagline {
+  color: #ffffff;
+  opacity: 0.9;
+  margin-top: 6px;
+  font-size: 1rem;
+}
+
+/* =====================
+   TEXT SECTIONS
+===================== */
+section {
+  margin-top: 28px;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+/* =====================
+   LISTS (DOT FIX)
+===================== */
+ul {
+  list-style: none;      /* removes bullet */
+  padding-left: 0;
+  margin: 0;
+}
+
+li {
+  list-style: none;      /* safety */
+}
+
+/* =====================
+   LINKS
+===================== */
 .links {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .links a {
-  color: #fff; /* white text */
+  color: #ffffff;
   text-decoration: none;
   position: relative;
   width: fit-content;
@@ -94,32 +148,23 @@ body {
   width: 100%;
 }
 
-/* hero */
-.avatar {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  margin-bottom: 20px;
-}
-
-.tagline {
-  color: #9aa0ff;
-}
-
-/* footer */
+/* =====================
+   FOOTER
+===================== */
 footer {
   font-size: 0.75rem;
-  color: #555555;   /* dark gray */
+  color: #555555;
   text-align: center;
   margin-top: 40px;
-  z-index: 2;
 }
 
-/* ENTER OVERLAY */
+/* =====================
+   ENTER OVERLAY
+===================== */
 #enter {
   position: fixed;
   inset: 0;
-  background: rgba(20,20,40,0.95);
+  background: rgba(20, 20, 40, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -135,7 +180,9 @@ footer {
   visibility: hidden;
 }
 
-/* mobile adjustments */
+/* =====================
+   MOBILE
+===================== */
 @media (max-width: 480px) {
   .container {
     margin: 60px 14px;
