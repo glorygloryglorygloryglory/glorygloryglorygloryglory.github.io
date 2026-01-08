@@ -138,8 +138,8 @@ function drawSnow() {
 ===================== */
 let audioCtx, analyser, source, data;
 
-const baseSpeed = 0.6;
-const burstSpeed = 4.5;
+const baseSpeed = 0.6;   // normal slow snow
+const burstSpeed = 4.5; // fast on bass hit
 
 function setupBeat() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -155,6 +155,7 @@ function setupBeat() {
   function tick() {
     analyser.getByteFrequencyData(data);
 
+    // low frequencies only (bass)
     let bass = 0;
     for (let i = 0; i < 10; i++) bass += data[i];
     bass /= 10;
