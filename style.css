@@ -17,6 +17,7 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  opacity: 0;
   transition: opacity 1s ease;
 }
 
@@ -27,7 +28,7 @@ body {
   padding-top: 120px;
   opacity: 0;
   transform: translateY(20px);
-  transition: 1s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
 
 .container.show {
@@ -44,6 +45,18 @@ body {
 
 .tagline {
   color: #9aa0ff;
+}
+
+/* LINKS */
+.links a {
+  display: block;
+  margin: 10px 0;
+  color: #b5b8ff;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
 }
 
 /* ENTER OVERLAY */
