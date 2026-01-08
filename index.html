@@ -9,15 +9,16 @@
 </head>
 <body>
 
+  <!-- background -->
+  <div id="background"></div>
+
+  <!-- enter overlay -->
   <div id="enter">
     <span>click to enter</span>
   </div>
 
   <!-- audio -->
   <audio id="bg-music" loop preload="auto"></audio>
-
-  <!-- background -->
-  <div id="background"></div>
 
   <!-- snow -->
   <canvas id="snow"></canvas>
@@ -29,7 +30,8 @@
       <p class="tagline">uhhhhhh hi</p>
     </section>
 
-    <section class="about me">
+    <!-- FIXED: removed "me" -->
+    <section class="about">
       <h2>about</h2>
       <p>i spend my time online either messing around on roblox, or playing hypixel bedwars n other games</p>
     </section>
@@ -43,6 +45,7 @@
 
     <section class="links">
       <h2>find me here</h2>
+
       <a href="https://www.roblox.com/users/93730259/profile" target="_blank">
         roblox @roblox_user_93730259
       </a>
@@ -86,8 +89,9 @@ const tracks = [
   "music/song10.ogg",
   "music/song11.ogg"
 ];
+
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
-music.volume = 0.05;
+music.volume = 0.1;
 
 /* =====================
    BACKGROUND
@@ -98,8 +102,9 @@ const backgrounds = [
   "backgrounds/bg3.png",
   "backgrounds/bg4.png"
 ];
-const bgImage = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-backgroundDiv.style.backgroundImage = `url('${bgImage}')`;
+
+backgroundDiv.style.backgroundImage =
+  `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
 
 /* =====================
    CANVAS RESIZE
@@ -118,11 +123,11 @@ resize();
 const flakes = Array.from({ length: 120 }, () => ({
   x: Math.random() * w,
   y: Math.random() * h,
-  r: Math.random() * 3 + 1, // slightly bigger snow
-  d: Math.random() + 0.5
+  r: Math.random() * 3 + 1,
+  d: Math.random() * 0.6 + 0.3
 }));
 
-let beatVelocity = 1;
+let beatVelocity = 0.6;
 let zoomScale = 1;
 
 function drawSnow() {
@@ -144,9 +149,7 @@ function drawSnow() {
     }
   });
 
-  // apply zoom to background
   backgroundDiv.style.transform = `scale(${zoomScale})`;
-
   requestAnimationFrame(drawSnow);
 }
 
@@ -169,14 +172,13 @@ function setupBeat() {
   function tick() {
     analyser.getByteFrequencyData(data);
     const avg = data.reduce((a, b) => a + b, 0) / data.length;
-    
-    // velocity edit: snow and background zoom
-    beatVelocity = 1 + avg / 150; // snow speed
-    zoomScale = 1 + avg / 5000; // small zoom
-    
+
+    // slow → FAST on bass
+    beatVelocity = 0.6 + avg / 80;
+    zoomScale = 1 + avg / 4000;
+
     requestAnimationFrame(tick);
   }
-
   tick();
 }
 
@@ -184,7 +186,6 @@ function setupBeat() {
    CLICK TO ENTER
 ===================== */
 canvas.style.opacity = 0;
-canvas.style.transition = "opacity 1s ease";
 
 enter.addEventListener("click", async () => {
   enter.classList.add("hide");
@@ -196,10 +197,7 @@ enter.addEventListener("click", async () => {
     console.log("Audio blocked:", e);
   }
 
-  setTimeout(() => {
-    mainContainer.classList.add("show");
-  }, 300);
-
+  setTimeout(() => mainContainer.classList.add("show"), 300);
   setTimeout(() => {
     canvas.style.opacity = 1;
     drawSnow();
