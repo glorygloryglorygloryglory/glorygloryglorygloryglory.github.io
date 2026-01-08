@@ -61,22 +61,36 @@
 
 <script>
 /* =====================
-   MUSIC ROTATION (AUTO)
+   ELEMENTS (FIXED)
 ===================== */
-fetch("music/")
-  .then(r => r.text())
-  .then(html => {
-    const matches = [...html.matchAll(/href="([^"]+\.mp3)"/g)];
-    const tracks = matches.map(m => "music/" + m[1]);
-    music.src = tracks[Math.floor(Math.random() * tracks.length)];
-  });
-
-/* =====================
-   CANVAS SETUP
-===================== */
+const enter = document.getElementById("enter");
+const music = document.getElementById("bg-music");
+const mainContainer = document.querySelector(".container");
 const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
 
+/* =====================
+   MUSIC ROTATION (SAFE)
+===================== */
+const tracks = [
+  "music/1.mp3",
+  "music/2.mp3",
+  "music/3.mp3",
+  "music/4.mp3",
+  "music/5.mp3",
+  "music/6.mp3",
+  "music/7.mp3",
+  "music/8.mp3",
+  "music/9.mp3",
+  "music/10.mp3",
+  "music/11.mp3"
+];
+
+music.src = tracks[Math.floor(Math.random() * tracks.length)];
+
+/* =====================
+   CANVAS RESIZE
+===================== */
 let w, h;
 function resize() {
   w = canvas.width = window.innerWidth;
@@ -120,7 +134,7 @@ function drawSnow() {
 }
 
 /* =====================
-   AUDIO BEAT (FIXED)
+   AUDIO BEAT (STABLE)
 ===================== */
 let audioCtx, analyser, source, data;
 
@@ -148,20 +162,19 @@ function setupBeat() {
 /* =====================
    CLICK TO ENTER
 ===================== */
-const enter = document.getElementById("enter");
-const mainContainer = document.querySelector(".container");
-
 canvas.style.opacity = 0;
 canvas.style.transition = "opacity 1s ease";
 
 enter.addEventListener("click", async () => {
   enter.classList.add("hide");
 
-  // IMPORTANT: resume audio context
-  await music.play();
-  music.volume = 0.25;
-
-  setupBeat();
+  try {
+    await music.play();
+    music.volume = 0.25;
+    setupBeat();
+  } catch (e) {
+    console.log("Audio blocked:", e);
+  }
 
   setTimeout(() => {
     mainContainer.classList.add("show");
