@@ -9,13 +9,12 @@
 </head>
 <body>
 
-  <!-- click to enter -->
   <div id="enter">
     <span>click to enter</span>
   </div>
 
-  <!-- music (randomized in JS) -->
-  <audio id="bg-music" loop></audio>
+  <!-- audio -->
+  <audio id="bg-music" loop preload="auto"></audio>
 
   <!-- snow -->
   <canvas id="snow"></canvas>
@@ -61,9 +60,9 @@
   </main>
 
 <script>
-/* =========================
-   RANDOM MUSIC ROTATION
-========================= */
+/* =====================
+   MUSIC ROTATION
+===================== */
 const tracks = [
   "music/1.mp3",
   "music/2.mp3",
@@ -73,17 +72,12 @@ const tracks = [
 const music = document.getElementById("bg-music");
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
 
-/* =========================
-   ELEMENTS
-========================= */
-const enter = document.getElementById("enter");
-const mainContainer = document.querySelector("main.container");
+/* =====================
+   CANVAS SETUP
+===================== */
 const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
 
-/* =========================
-   CANVAS RESIZE
-========================= */
 let w, h;
 function resize() {
   w = canvas.width = window.innerWidth;
@@ -92,9 +86,9 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-/* =========================
+/* =====================
    SNOW
-========================= */
+===================== */
 const flakes = Array.from({ length: 120 }, () => ({
   x: Math.random() * w,
   y: Math.random() * h,
@@ -126,42 +120,47 @@ function drawSnow() {
   requestAnimationFrame(drawSnow);
 }
 
-/* =========================
-   AUDIO BEAT VELOCITY
-========================= */
+/* =====================
+   AUDIO BEAT (FIXED)
+===================== */
+let audioCtx, analyser, source, data;
+
 function setupBeat() {
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  const audioCtx = new AudioCtx();
-  const source = audioCtx.createMediaElementSource(music);
-  const analyser = audioCtx.createAnalyser();
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  source = audioCtx.createMediaElementSource(music);
 
   analyser.fftSize = 256;
+  data = new Uint8Array(analyser.frequencyBinCount);
+
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
-
-  const data = new Uint8Array(analyser.frequencyBinCount);
 
   function tick() {
     analyser.getByteFrequencyData(data);
     const avg = data.reduce((a, b) => a + b, 0) / data.length;
-    beatVelocity = 1 + avg / 160; // snow speeds up on beat
+    beatVelocity = 1 + avg / 160;
     requestAnimationFrame(tick);
   }
 
   tick();
 }
 
-/* =========================
+/* =====================
    CLICK TO ENTER
-========================= */
+===================== */
+const enter = document.getElementById("enter");
+const mainContainer = document.querySelector(".container");
+
 canvas.style.opacity = 0;
 canvas.style.transition = "opacity 1s ease";
 
-enter.addEventListener("click", () => {
+enter.addEventListener("click", async () => {
   enter.classList.add("hide");
 
+  // IMPORTANT: resume audio context
+  await music.play();
   music.volume = 0.25;
-  music.play().catch(() => {});
 
   setupBeat();
 
