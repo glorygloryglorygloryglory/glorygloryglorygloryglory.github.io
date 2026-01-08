@@ -45,12 +45,11 @@ body {
   text-align: center;
 
   /* glass effect */
-  background: rgba(20, 20, 25, 0.35); /* more transparent */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(20, 20, 25, 0.25); /* more transparent, glassy */
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
   border-radius: 22px;
-  /* softer shadow */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25); /* softer shadow */
 
   opacity: 0;
   transform: translateY(20px);
@@ -105,6 +104,15 @@ body {
 
 .tagline {
   color: #9aa0ff;
+}
+
+/* footer */
+footer {
+  font-size: 0.75rem;
+  color: #555555;   /* dark gray */
+  text-align: center;
+  margin-top: 40px;
+  z-index: 2;
 }
 
 /* ENTER OVERLAY */
