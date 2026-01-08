@@ -4,123 +4,126 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>glory.rocks</title>
-  <meta name="description" content="hello" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <!-- click to enter -->
   <div id="enter">
     <span>click to enter</span>
   </div>
 
-  <audio id="bg-music" loop>
-    <source src="music.mp3" type="audio/mpeg">
-  </audio>
+  <!-- music -->
+  <audio id="bg-music" loop></audio>
 
+  <!-- snow -->
   <canvas id="snow"></canvas>
 
   <main class="container">
     <section class="hero">
-      <img src="profile.png" alt="profile" class="avatar" />
+      <img src="profile.png" class="avatar">
       <h1>glory</h1>
       <p class="tagline">uhhhhhh hi</p>
     </section>
 
-    <section class="about me">
-      <h2>about</h2>
-      <p>i spend my time online either messing around on roblox, or playing hypixel bedwars n other games</p>
-    </section>
-
-    <section class="interests">
-      <h2>interests</h2>
-      <ul>
-        <li>i dunno.. </li>
-      </ul>
-    </section>
-
-    <section class="links">
-      <h2>find me here</h2>
-
-      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">
-        roblox @glorygioryglory
-      </a>
-
-      <a href="https://glory.rocks/" target="_blank">
-        discord @pawpulation
-      </a>
-
-      <a href="https://t.me/pupboi" target="_blank">
-        telegram @pupboi
-      </a>
-    </section>
-
-    <footer>
-      <p>glory.rocks</p>
-    </footer>
+    <footer>© 2025 glory</footer>
   </main>
 
-  <script>
-    const enter = document.getElementById("enter");
-    const music = document.getElementById("bg-music");
-    const mainContainer = document.querySelector("main.container");
-    const canvas = document.getElementById("snow");
-    const ctx = canvas.getContext("2d");
+<script>
+/* RANDOM MUSIC ROTATION */
+const tracks = [
+  "music/1.mp3",
+  "music/2.mp3",
+  "music/3.mp3"
+];
 
-    let w, h;
-    function resize() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
+const music = document.getElementById("bg-music");
+music.src = tracks[Math.floor(Math.random() * tracks.length)];
+
+/* CANVAS */
+const canvas = document.getElementById("snow");
+const ctx = canvas.getContext("2d");
+
+let w, h;
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+/* SNOW */
+const flakes = Array.from({ length: 140 }, () => ({
+  x: Math.random() * w,
+  y: Math.random() * h,
+  r: Math.random() * 1.5 + 0.5,
+  d: Math.random() * 1 + 0.5
+}));
+
+let beatVelocity = 1;
+
+function drawSnow() {
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "rgba(255,255,255,0.6)";
+  ctx.beginPath();
+
+  flakes.forEach(f => {
+    ctx.moveTo(f.x, f.y);
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+  });
+  ctx.fill();
+
+  flakes.forEach(f => {
+    f.y += f.d * beatVelocity;
+    if (f.y > h) {
+      f.y = -5;
+      f.x = Math.random() * w;
     }
-    window.addEventListener("resize", resize);
-    resize();
+  });
 
-    const flakes = Array.from({ length: 120 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: Math.random() * 1.5 + 0.5,
-      d: Math.random() + 0.5
-    }));
+  requestAnimationFrame(drawSnow);
+}
 
-    function drawSnow() {
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(255,255,255,0.6)";
-      ctx.beginPath();
-      flakes.forEach(f => {
-        ctx.moveTo(f.x, f.y);
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-      });
-      ctx.fill();
+/* AUDIO BEAT VELOCITY */
+function setupBeat() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const ctxAudio = new AudioCtx();
+  const src = ctxAudio.createMediaElementSource(music);
+  const analyser = ctxAudio.createAnalyser();
 
-      flakes.forEach(f => {
-        f.y += f.d;
-        if (f.y > h) {
-          f.y = -5;
-          f.x = Math.random() * w;
-        }
-      });
+  analyser.fftSize = 256;
+  src.connect(analyser);
+  analyser.connect(ctxAudio.destination);
 
-      requestAnimationFrame(drawSnow);
-    }
+  const data = new Uint8Array(analyser.frequencyBinCount);
 
-    canvas.style.opacity = 0;
-    canvas.style.transition = "opacity 1s ease";
+  function tick() {
+    analyser.getByteFrequencyData(data);
+    let avg = data.reduce((a, b) => a + b) / data.length;
+    beatVelocity = 1 + avg / 160;
+    requestAnimationFrame(tick);
+  }
+  tick();
+}
 
-    enter.addEventListener("click", () => {
-      enter.classList.add("hide");
+/* CLICK TO ENTER */
+const enter = document.getElementById("enter");
+const container = document.querySelector(".container");
 
-      music.volume = 0.25;
-      music.play().catch(() => console.log("No music found or playback blocked"));
+canvas.style.opacity = 0;
 
-      setTimeout(() => {
-        mainContainer.classList.add("show");
-      }, 300);
+enter.addEventListener("click", () => {
+  enter.classList.add("hide");
+  container.classList.add("show");
 
-      setTimeout(() => {
-        canvas.style.opacity = 1;
-        drawSnow();
-      }, 600);
-    });
-  </script>
+  music.volume = 0.25;
+  music.play();
+  setupBeat();
+
+  canvas.style.opacity = 1;
+  drawSnow();
+});
+</script>
 
 </body>
 </html>
