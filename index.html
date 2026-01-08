@@ -146,9 +146,14 @@ function drawSnow() {
 }
 
 /* =====================
-   AUDIO BEAT
+   AUDIO BEAT (BASS ONLY)
 ===================== */
 let audioCtx, analyser, source, data;
+
+let baseSpeed = 0.6;     // normal slow snow
+let burstSpeed = 4.5;   // FAST on bass hit
+let beatVelocity = baseSpeed;
+let zoomScale = 1;
 
 function setupBeat() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -163,13 +168,24 @@ function setupBeat() {
 
   function tick() {
     analyser.getByteFrequencyData(data);
-    const avg = data.reduce((a, b) => a + b, 0) / data.length;
 
-    // Snow speed reacts to bass
-    beatVelocity = 0.5 + avg / 150;
+    // === BASS ONLY (low frequencies) ===
+    let bass = 0;
+    for (let i = 0; i < 10; i++) {
+      bass += data[i];
+    }
+    bass /= 10;
 
-    // Background zoom reacts to bass
-    zoomScale = 1 + avg / 1500;
+    // === Snow velocity edit ===
+    if (bass > 180) {
+      // bass HIT
+      beatVelocity = burstSpeed;
+      zoomScale = 1.06; // subtle punch
+    } else {
+      // smooth return to normal
+      beatVelocity += (baseSpeed - beatVelocity) * 0.08;
+      zoomScale += (1 - zoomScale) * 0.08;
+    }
 
     requestAnimationFrame(tick);
   }
