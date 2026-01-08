@@ -14,7 +14,7 @@
   </div>
 
   <!-- audio -->
-  <audio id="bg-music" loop preload="auto"></audio>
+  <audio id="bg-music" preload="auto" crossorigin="anonymous"></audio>
 
   <!-- snow -->
   <canvas id="snow"></canvas>
@@ -26,12 +26,12 @@
       <p class="tagline">uhhhhhh hi</p>
     </section>
 
-    <section>
+    <section class="about">
       <h2>about</h2>
       <p>i spend my time online either messing around on roblox, or playing hypixel bedwars n other games</p>
     </section>
 
-    <section>
+    <section class="interests">
       <h2>interests</h2>
       <ul>
         <li>i dunno..</li>
@@ -40,18 +40,9 @@
 
     <section class="links">
       <h2>find me here</h2>
-
-      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">
-        roblox @roblox_user_93730259
-      </a>
-
-      <a href="https://glory.rocks/" target="_blank">
-        discord @pawpulation
-      </a>
-
-      <a href="https://t.me/pupboi" target="_blank">
-        telegram @pupboi
-      </a>
+      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">roblox</a>
+      <a href="https://glory.rocks/" target="_blank">discord</a>
+      <a href="https://t.me/pupboi" target="_blank">telegram</a>
     </section>
 
     <footer>
@@ -60,115 +51,129 @@
   </main>
 
 <script>
+/* =====================
+   ELEMENTS
+===================== */
 const enter = document.getElementById("enter");
 const music = document.getElementById("bg-music");
-const container = document.querySelector(".container");
+const mainContainer = document.querySelector(".container");
 const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
 
-/* ===== MUSIC LIST ===== */
+/* =====================
+   RANDOM OGG TRACK
+===================== */
 const tracks = [
-  "music/1.mp3",
-  "music/2.mp3",
-  "music/3.mp3",
-  "music/4.mp3",
-  "music/5.mp3",
-  "music/6.mp3",
-  "music/7.mp3",
-  "music/8.mp3",
-  "music/9.mp3",
-  "music/10.mp3",
-  "music/11.mp3"
+  "music/song1.ogg",
+  "music/song2.ogg",
+  "music/song3.ogg",
+  "music/song4.ogg",
+  "music/song5.ogg",
+  "music/song6.ogg",
+  "music/song7.ogg",
+  "music/song8.ogg",
+  "music/song9.ogg",
+  "music/song10.ogg",
+  "music/song11.ogg"
 ];
 
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
-music.loop = true;
-music.volume = 0.35;
-music.muted = false;
+music.volume = 0.25;
 
-/* ===== CANVAS ===== */
+/* =====================
+   CANVAS
+===================== */
+let w, h;
 function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
 }
-resize();
 window.addEventListener("resize", resize);
+resize();
 
-/* ===== SNOW ===== */
+/* =====================
+   SNOW
+===================== */
 const flakes = Array.from({ length: 120 }, () => ({
-  x: Math.random() * canvas.width,
-  y: Math.random() * canvas.height,
+  x: Math.random() * w,
+  y: Math.random() * h,
   r: Math.random() * 1.5 + 0.5,
-  v: Math.random() * 1 + 0.5
+  d: Math.random() + 0.5
 }));
 
 let beatVelocity = 1;
 
 function drawSnow() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = "rgba(255,255,255,0.6)";
   ctx.beginPath();
 
   flakes.forEach(f => {
     ctx.moveTo(f.x, f.y);
     ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-    f.y += f.v * beatVelocity;
-    if (f.y > canvas.height) {
+  });
+  ctx.fill();
+
+  flakes.forEach(f => {
+    f.y += f.d * beatVelocity;
+    if (f.y > h) {
       f.y = -5;
-      f.x = Math.random() * canvas.width;
+      f.x = Math.random() * w;
     }
   });
 
-  ctx.fill();
   requestAnimationFrame(drawSnow);
 }
 
-/* ===== AUDIO BEAT ===== */
-let audioCtx, analyser, data;
+/* =====================
+   BEAT DETECTION
+===================== */
+let audioCtx, analyser, source, data;
 
 function setupBeat() {
-  audioCtx = new AudioContext();
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
-  const src = audioCtx.createMediaElementSource(music);
-
   analyser.fftSize = 256;
-  data = new Uint8Array(analyser.frequencyBinCount);
 
-  src.connect(analyser);
+  source = audioCtx.createMediaElementSource(music);
+  source.connect(analyser);
   analyser.connect(audioCtx.destination);
+
+  data = new Uint8Array(analyser.frequencyBinCount);
 
   function tick() {
     analyser.getByteFrequencyData(data);
-    const avg = data.reduce((a,b)=>a+b,0) / data.length;
-    beatVelocity = 1 + avg / 200;
+    const avg = data.reduce((a, b) => a + b, 0) / data.length;
+    beatVelocity = 1 + avg / 140;
     requestAnimationFrame(tick);
   }
 
   tick();
 }
 
-/* ===== CLICK TO ENTER ===== */
+/* =====================
+   CLICK TO ENTER
+===================== */
+canvas.style.opacity = 0;
+
 enter.addEventListener("click", async () => {
   enter.classList.add("hide");
 
   try {
-    // HARD UNLOCK
-    const ctx = new AudioContext();
-    await ctx.resume();
-
     await music.play();
-    console.log("MUSIC PLAYING:", music.src);
-
     setupBeat();
-    drawSnow();
-
-  } catch (err) {
-    console.error("AUDIO FAILED:", err);
-    alert("Audio blocked — check console");
+  } catch (e) {
+    console.error("Audio failed:", e);
   }
 
-  setTimeout(() => container.classList.add("show"), 300);
-  canvas.style.opacity = 1;
+  setTimeout(() => {
+    mainContainer.classList.add("show");
+  }, 300);
+
+  setTimeout(() => {
+    canvas.style.opacity = 1;
+    drawSnow();
+  }, 600);
 });
 </script>
 
