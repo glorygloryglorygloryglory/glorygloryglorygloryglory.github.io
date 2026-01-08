@@ -27,7 +27,7 @@
     <section class="hero">
       <img src="profile.png" alt="profile" class="avatar" />
       <h1>glory</h1>
-     <p class="tagline">uhhhhhh hi</p>
+      <p class="tagline">uhhhhhh hi</p>
     </section>
 
     <section class="about">
@@ -44,15 +44,9 @@
 
     <section class="links">
       <h2>find me here</h2>
-      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">
-        roblox @roblox_user_93730259
-      </a>
-      <a href="https://glory.rocks/" target="_blank">
-        discord @pawpulation
-      </a>
-      <a href="https://t.me/pupboi" target="_blank">
-        telegram @pupboi
-      </a>
+      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">roblox @roblox_user_93730259</a>
+      <a href="https://glory.rocks/" target="_blank">discord @pawpulation</a>
+      <a href="https://t.me/pupboi" target="_blank">telegram @pupboi</a>
     </section>
 
     <footer>
@@ -109,7 +103,7 @@ resize();
 ===================== */
 const flakes = Array.from({ length: 120 }, () => ({
   x: Math.random() * w,
-  y: Math.random() * h + 10, // offset more so no flake sits exactly at top edge
+  y: Math.random() * h + 10,
   r: Math.random() * 3 + 1,
   d: Math.random() * 0.6 + 0.3
 }));
@@ -118,30 +112,24 @@ let beatVelocity = 0.6;
 let zoomScale = 1;
 
 function drawSnow() {
-  // Clear canvas fully each frame. MDN notes you should call beginPath when drawing new items
-  // after clearRect to avoid unintended side effects. :contentReference[oaicite:0]{index=0}
   ctx.clearRect(0, 0, w, h);
 
-  // Draw each flake individually
   flakes.forEach(f => {
-    ctx.beginPath(); // start new path for each flake, avoids stray artifacts
+    ctx.beginPath();
     ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,255,255,0.6)";
     ctx.fill();
   });
 
-  // Move flakes
   flakes.forEach(f => {
     f.y += f.d * beatVelocity;
     if (f.y > h) {
-      f.y = -10; // reset above canvas
+      f.y = -10;
       f.x = Math.random() * w;
     }
   });
 
-  // Apply background zoom (set somewhere else in tick)
   backgroundDiv.style.transform = `scale(${zoomScale})`;
-
   requestAnimationFrame(drawSnow);
 }
 
@@ -150,10 +138,8 @@ function drawSnow() {
 ===================== */
 let audioCtx, analyser, source, data;
 
-let baseSpeed = 0.6;     // normal slow snow
-let burstSpeed = 4.5;   // FAST on bass hit
-let beatVelocity = baseSpeed;
-let zoomScale = 1;
+const baseSpeed = 0.6;
+const burstSpeed = 4.5;
 
 function setupBeat() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -169,20 +155,14 @@ function setupBeat() {
   function tick() {
     analyser.getByteFrequencyData(data);
 
-    // === BASS ONLY (low frequencies) ===
     let bass = 0;
-    for (let i = 0; i < 10; i++) {
-      bass += data[i];
-    }
+    for (let i = 0; i < 10; i++) bass += data[i];
     bass /= 10;
 
-    // === Snow velocity edit ===
     if (bass > 180) {
-      // bass HIT
       beatVelocity = burstSpeed;
-      zoomScale = 1.06; // subtle punch
+      zoomScale = 1.06;
     } else {
-      // smooth return to normal
       beatVelocity += (baseSpeed - beatVelocity) * 0.08;
       zoomScale += (1 - zoomScale) * 0.08;
     }
