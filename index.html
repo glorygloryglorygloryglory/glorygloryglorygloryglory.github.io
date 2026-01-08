@@ -61,16 +61,15 @@
 
 <script>
 /* =====================
-   MUSIC ROTATION
+   MUSIC ROTATION (AUTO)
 ===================== */
-const tracks = [
-  "music/1.mp3",
-  "music/2.mp3",
-  "music/3.mp3"
-];
-
-const music = document.getElementById("bg-music");
-music.src = tracks[Math.floor(Math.random() * tracks.length)];
+fetch("music/")
+  .then(r => r.text())
+  .then(html => {
+    const matches = [...html.matchAll(/href="([^"]+\.mp3)"/g)];
+    const tracks = matches.map(m => "music/" + m[1]);
+    music.src = tracks[Math.floor(Math.random() * tracks.length)];
+  });
 
 /* =====================
    CANVAS SETUP
