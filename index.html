@@ -60,18 +60,13 @@
   </main>
 
 <script>
-/* =====================
-   ELEMENTS
-===================== */
 const enter = document.getElementById("enter");
 const music = document.getElementById("bg-music");
-const mainContainer = document.querySelector(".container");
+const container = document.querySelector(".container");
 const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
 
-/* =====================
-   MUSIC ROTATION
-===================== */
+/* ===== MUSIC LIST ===== */
 const tracks = [
   "music/1.mp3",
   "music/2.mp3",
@@ -87,102 +82,93 @@ const tracks = [
 ];
 
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
-music.volume = 0.25;
+music.loop = true;
+music.volume = 0.35;
+music.muted = false;
 
-/* =====================
-   CANVAS RESIZE
-===================== */
-let w, h;
+/* ===== CANVAS ===== */
 function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-window.addEventListener("resize", resize);
 resize();
+window.addEventListener("resize", resize);
 
-/* =====================
-   SNOW
-===================== */
+/* ===== SNOW ===== */
 const flakes = Array.from({ length: 120 }, () => ({
-  x: Math.random() * w,
-  y: Math.random() * h,
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
   r: Math.random() * 1.5 + 0.5,
-  d: Math.random() + 0.5
+  v: Math.random() * 1 + 0.5
 }));
 
 let beatVelocity = 1;
 
 function drawSnow() {
-  ctx.clearRect(0, 0, w, h);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "rgba(255,255,255,0.6)";
   ctx.beginPath();
 
   flakes.forEach(f => {
     ctx.moveTo(f.x, f.y);
     ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-  });
-  ctx.fill();
-
-  flakes.forEach(f => {
-    f.y += f.d * beatVelocity;
-    if (f.y > h) {
+    f.y += f.v * beatVelocity;
+    if (f.y > canvas.height) {
       f.y = -5;
-      f.x = Math.random() * w;
+      f.x = Math.random() * canvas.width;
     }
   });
 
+  ctx.fill();
   requestAnimationFrame(drawSnow);
 }
 
-/* =====================
-   AUDIO BEAT
-===================== */
-let audioCtx, analyser, source, data;
+/* ===== AUDIO BEAT ===== */
+let audioCtx, analyser, data;
 
 function setupBeat() {
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  audioCtx = new AudioContext();
   analyser = audioCtx.createAnalyser();
-  source = audioCtx.createMediaElementSource(music);
+  const src = audioCtx.createMediaElementSource(music);
 
   analyser.fftSize = 256;
   data = new Uint8Array(analyser.frequencyBinCount);
 
-  source.connect(analyser);
+  src.connect(analyser);
   analyser.connect(audioCtx.destination);
 
   function tick() {
     analyser.getByteFrequencyData(data);
-    const avg = data.reduce((a, b) => a + b, 0) / data.length;
-    beatVelocity = 1 + avg / 180;
+    const avg = data.reduce((a,b)=>a+b,0) / data.length;
+    beatVelocity = 1 + avg / 200;
     requestAnimationFrame(tick);
   }
 
   tick();
 }
 
-/* =====================
-   CLICK TO ENTER
-===================== */
-canvas.style.opacity = 0;
-
+/* ===== CLICK TO ENTER ===== */
 enter.addEventListener("click", async () => {
   enter.classList.add("hide");
 
   try {
+    // HARD UNLOCK
+    const ctx = new AudioContext();
+    await ctx.resume();
+
     await music.play();
+    console.log("MUSIC PLAYING:", music.src);
+
     setupBeat();
-  } catch (e) {
-    console.log("Audio blocked:", e);
+    drawSnow();
+
+  } catch (err) {
+    console.error("AUDIO FAILED:", err);
+    alert("Audio blocked — check console");
   }
 
-  setTimeout(() => {
-    mainContainer.classList.add("show");
-  }, 300);
-
-  setTimeout(() => {
-    canvas.style.opacity = 1;
-    drawSnow();
-  }, 600);
+  setTimeout(() => container.classList.add("show"), 300);
+  canvas.style.opacity = 1;
 });
 </script>
 
