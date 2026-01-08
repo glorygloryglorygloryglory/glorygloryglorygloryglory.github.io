@@ -27,7 +27,7 @@
     <section class="hero">
       <img src="profile.png" alt="profile" class="avatar" />
       <h1>glory</h1>
-      <p class="tagline">uhhhhhh hi</p>
+      <!-- tagline removed -->
     </section>
 
     <section class="about">
@@ -80,13 +80,19 @@ const tracks = [
   "music/song9.ogg","music/song10.ogg","music/song11.ogg"
 ];
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
-music.volume = 0.05; // softer volume
+music.volume = 0.05;
 
 /* =====================
    BACKGROUND
 ===================== */
-const backgrounds = ["backgrounds/bg1.png","backgrounds/bg2.png","backgrounds/bg3.png","backgrounds/bg4.png"];
-backgroundDiv.style.backgroundImage = `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
+const backgrounds = [
+  "backgrounds/bg1.png",
+  "backgrounds/bg2.png",
+  "backgrounds/bg3.png",
+  "backgrounds/bg4.png"
+];
+backgroundDiv.style.backgroundImage =
+  `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
 
 /* =====================
    CANVAS RESIZE
@@ -104,7 +110,7 @@ resize();
 ===================== */
 const flakes = Array.from({ length: 120 }, () => ({
   x: Math.random() * w,
-  y: Math.random() * h + 5, // add 5 to prevent dot at top-left
+  y: Math.random() * h + 10, // offset more so no flake sits exactly at top edge
   r: Math.random() * 3 + 1,
   d: Math.random() * 0.6 + 0.3
 }));
@@ -113,24 +119,30 @@ let beatVelocity = 0.6;
 let zoomScale = 1;
 
 function drawSnow() {
+  // Clear canvas fully each frame. MDN notes you should call beginPath when drawing new items
+  // after clearRect to avoid unintended side effects. :contentReference[oaicite:0]{index=0}
   ctx.clearRect(0, 0, w, h);
 
+  // Draw each flake individually
   flakes.forEach(f => {
-    ctx.beginPath();
+    ctx.beginPath(); // start new path for each flake, avoids stray artifacts
     ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,255,255,0.6)";
     ctx.fill();
   });
 
+  // Move flakes
   flakes.forEach(f => {
     f.y += f.d * beatVelocity;
     if (f.y > h) {
-      f.y = -5;
+      f.y = -10; // reset above canvas
       f.x = Math.random() * w;
     }
   });
 
+  // Apply background zoom (set somewhere else in tick)
   backgroundDiv.style.transform = `scale(${zoomScale})`;
+
   requestAnimationFrame(drawSnow);
 }
 
@@ -152,9 +164,12 @@ function setupBeat() {
 
   function tick() {
     analyser.getByteFrequencyData(data);
-    const avg = data.reduce((a,b) => a+b,0) / data.length;
+    const avg = data.reduce((a, b) => a + b, 0) / data.length;
 
+    // Snow speed reacts to bass
     beatVelocity = 0.5 + avg / 150;
+
+    // Background zoom reacts to bass
     zoomScale = 1 + avg / 1500;
 
     requestAnimationFrame(tick);
@@ -174,7 +189,7 @@ enter.addEventListener("click", async () => {
   try {
     await music.play();
     setupBeat();
-  } catch(e) {
+  } catch (e) {
     console.log("Audio blocked:", e);
   }
 
