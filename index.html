@@ -30,7 +30,6 @@
       <p class="tagline">uhhhhhh hi</p>
     </section>
 
-    <!-- FIXED: removed "me" -->
     <section class="about">
       <h2>about</h2>
       <p>i spend my time online either messing around on roblox, or playing hypixel bedwars n other games</p>
@@ -170,19 +169,19 @@ function setupBeat() {
   analyser.connect(audioCtx.destination);
 
   function tick() {
-  analyser.getByteFrequencyData(data);
-  const avg = data.reduce((a, b) => a + b, 0) / data.length;
+    analyser.getByteFrequencyData(data);
+    const avg = data.reduce((a, b) => a + b, 0) / data.length;
 
-  // Snow speed reacts to bass
-  beatVelocity = 0.5 + avg / 150; // slow by default, faster on bass
+    // Snow speed reacts to bass
+    beatVelocity = 0.5 + avg / 150; 
 
-  // Background zoom reacts to bass
-  zoomScale = 1 + avg / 2000; // bigger multiplier for more visible zoom
+    // Background zoom reacts to bass
+    zoomScale = 1 + avg / 2000;
 
-  // apply zoom to background
-  backgroundDiv.style.transform = `scale(${zoomScale})`;
+    requestAnimationFrame(tick);
+  }
 
-  requestAnimationFrame(tick);
+  tick(); // start the tick loop
 }
 
 /* =====================
