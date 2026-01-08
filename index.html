@@ -14,7 +14,10 @@
   </div>
 
   <!-- audio -->
-  <audio id="bg-music" preload="auto" crossorigin="anonymous"></audio>
+  <audio id="bg-music" loop preload="auto"></audio>
+
+  <!-- background -->
+  <div id="background"></div>
 
   <!-- snow -->
   <canvas id="snow"></canvas>
@@ -26,7 +29,7 @@
       <p class="tagline">uhhhhhh hi</p>
     </section>
 
-    <section class="about">
+    <section class="about me">
       <h2>about</h2>
       <p>i spend my time online either messing around on roblox, or playing hypixel bedwars n other games</p>
     </section>
@@ -40,9 +43,15 @@
 
     <section class="links">
       <h2>find me here</h2>
-      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">roblox</a>
-      <a href="https://glory.rocks/" target="_blank">discord</a>
-      <a href="https://t.me/pupboi" target="_blank">telegram</a>
+      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">
+        roblox @roblox_user_93730259
+      </a>
+      <a href="https://glory.rocks/" target="_blank">
+        discord @pawpulation
+      </a>
+      <a href="https://t.me/pupboi" target="_blank">
+        telegram @pupboi
+      </a>
     </section>
 
     <footer>
@@ -59,9 +68,10 @@ const music = document.getElementById("bg-music");
 const mainContainer = document.querySelector(".container");
 const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
+const backgroundDiv = document.getElementById("background");
 
 /* =====================
-   RANDOM OGG TRACK
+   MUSIC
 ===================== */
 const tracks = [
   "music/song1.ogg",
@@ -76,12 +86,23 @@ const tracks = [
   "music/song10.ogg",
   "music/song11.ogg"
 ];
-
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
-music.volume = 0.25;
+music.volume = 0.1;
 
 /* =====================
-   CANVAS
+   BACKGROUND
+===================== */
+const backgrounds = [
+  "backgrounds/bg1.jpg",
+  "backgrounds/bg2.jpg",
+  "backgrounds/bg3.jpg",
+  "backgrounds/bg4.jpg"
+];
+const bgImage = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+backgroundDiv.style.backgroundImage = `url('${bgImage}')`;
+
+/* =====================
+   CANVAS RESIZE
 ===================== */
 let w, h;
 function resize() {
@@ -97,11 +118,12 @@ resize();
 const flakes = Array.from({ length: 120 }, () => ({
   x: Math.random() * w,
   y: Math.random() * h,
-  r: Math.random() * 1.5 + 0.5,
+  r: Math.random() * 3 + 1, // slightly bigger snow
   d: Math.random() + 0.5
 }));
 
 let beatVelocity = 1;
+let zoomScale = 1;
 
 function drawSnow() {
   ctx.clearRect(0, 0, w, h);
@@ -122,29 +144,36 @@ function drawSnow() {
     }
   });
 
+  // apply zoom to background
+  backgroundDiv.style.transform = `scale(${zoomScale})`;
+
   requestAnimationFrame(drawSnow);
 }
 
 /* =====================
-   BEAT DETECTION
+   AUDIO BEAT
 ===================== */
 let audioCtx, analyser, source, data;
 
 function setupBeat() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 256;
-
   source = audioCtx.createMediaElementSource(music);
+
+  analyser.fftSize = 256;
+  data = new Uint8Array(analyser.frequencyBinCount);
+
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
-
-  data = new Uint8Array(analyser.frequencyBinCount);
 
   function tick() {
     analyser.getByteFrequencyData(data);
     const avg = data.reduce((a, b) => a + b, 0) / data.length;
-    beatVelocity = 1 + avg / 140;
+    
+    // velocity edit: snow and background zoom
+    beatVelocity = 1 + avg / 150; // snow speed
+    zoomScale = 1 + avg / 5000; // small zoom
+    
     requestAnimationFrame(tick);
   }
 
@@ -155,6 +184,7 @@ function setupBeat() {
    CLICK TO ENTER
 ===================== */
 canvas.style.opacity = 0;
+canvas.style.transition = "opacity 1s ease";
 
 enter.addEventListener("click", async () => {
   enter.classList.add("hide");
@@ -163,7 +193,7 @@ enter.addEventListener("click", async () => {
     await music.play();
     setupBeat();
   } catch (e) {
-    console.error("Audio failed:", e);
+    console.log("Audio blocked:", e);
   }
 
   setTimeout(() => {
