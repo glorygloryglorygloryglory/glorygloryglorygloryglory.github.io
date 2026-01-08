@@ -26,12 +26,12 @@
       <p class="tagline">uhhhhhh hi</p>
     </section>
 
-    <section class="about me">
+    <section>
       <h2>about</h2>
       <p>i spend my time online either messing around on roblox, or playing hypixel bedwars n other games</p>
     </section>
 
-    <section class="interests">
+    <section>
       <h2>interests</h2>
       <ul>
         <li>i dunno..</li>
@@ -61,7 +61,7 @@
 
 <script>
 /* =====================
-   ELEMENTS (FIXED)
+   ELEMENTS
 ===================== */
 const enter = document.getElementById("enter");
 const music = document.getElementById("bg-music");
@@ -70,7 +70,7 @@ const canvas = document.getElementById("snow");
 const ctx = canvas.getContext("2d");
 
 /* =====================
-   MUSIC ROTATION (SAFE)
+   MUSIC ROTATION
 ===================== */
 const tracks = [
   "music/1.mp3",
@@ -87,6 +87,7 @@ const tracks = [
 ];
 
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
+music.volume = 0.25;
 
 /* =====================
    CANVAS RESIZE
@@ -134,7 +135,7 @@ function drawSnow() {
 }
 
 /* =====================
-   AUDIO BEAT (STABLE)
+   AUDIO BEAT
 ===================== */
 let audioCtx, analyser, source, data;
 
@@ -152,7 +153,7 @@ function setupBeat() {
   function tick() {
     analyser.getByteFrequencyData(data);
     const avg = data.reduce((a, b) => a + b, 0) / data.length;
-    beatVelocity = 1 + avg / 160;
+    beatVelocity = 1 + avg / 180;
     requestAnimationFrame(tick);
   }
 
@@ -163,14 +164,12 @@ function setupBeat() {
    CLICK TO ENTER
 ===================== */
 canvas.style.opacity = 0;
-canvas.style.transition = "opacity 1s ease";
 
 enter.addEventListener("click", async () => {
   enter.classList.add("hide");
 
   try {
     await music.play();
-    music.volume = 0.25;
     setupBeat();
   } catch (e) {
     console.log("Audio blocked:", e);
