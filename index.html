@@ -44,7 +44,6 @@
 
     <section class="links">
       <h2>find me here</h2>
-
       <a href="https://www.roblox.com/users/93730259/profile" target="_blank">
         roblox @roblox_user_93730259
       </a>
@@ -88,7 +87,6 @@ const tracks = [
   "music/song10.ogg",
   "music/song11.ogg"
 ];
-
 music.src = tracks[Math.floor(Math.random() * tracks.length)];
 music.volume = 0.1;
 
@@ -101,7 +99,6 @@ const backgrounds = [
   "backgrounds/bg3.png",
   "backgrounds/bg4.png"
 ];
-
 backgroundDiv.style.backgroundImage =
   `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
 
@@ -131,15 +128,16 @@ let zoomScale = 1;
 
 function drawSnow() {
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "rgba(255,255,255,0.6)";
-  ctx.beginPath();
 
+  // Draw each flake individually to avoid stray dots
   flakes.forEach(f => {
-    ctx.moveTo(f.x, f.y);
+    ctx.beginPath();
     ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.fill();
   });
-  ctx.fill();
 
+  // Move flakes
   flakes.forEach(f => {
     f.y += f.d * beatVelocity;
     if (f.y > h) {
@@ -148,7 +146,9 @@ function drawSnow() {
     }
   });
 
+  // Apply background zoom
   backgroundDiv.style.transform = `scale(${zoomScale})`;
+
   requestAnimationFrame(drawSnow);
 }
 
@@ -176,12 +176,12 @@ function setupBeat() {
     beatVelocity = 0.5 + avg / 150; 
 
     // Background zoom reacts to bass
-    zoomScale = 1 + avg / 2000;
+    zoomScale = 1 + avg / 1500; // more noticeable zoom
 
     requestAnimationFrame(tick);
   }
 
-  tick(); // start the tick loop
+  tick();
 }
 
 /* =====================
