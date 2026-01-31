@@ -44,9 +44,23 @@
 
     <section class="links">
       <h2>find me here</h2>
-      <a href="https://www.roblox.com/users/93730259/profile" target="_blank">roblox @roblox_user_93730259</a>
-      <a href="https://glory.rocks/" target="_blank">discord @pawpulation or @paw777777</a>
-      <a href="https://t.me/pupboi" target="_blank">telegram @pupboi</a>
+
+      <div class="roblox-row">
+        <span class="platform-label">roblox</span>
+        <div class="roblox-links">
+          <a href="https://www.roblox.com/users/93730259/profile" target="_blank">93730259</a>
+          <a href="https://www.roblox.com/users/6861470/profile" target="_blank">6861470</a>
+          <a href="https://www.roblox.com/users/66187964/profile" target="_blank">66187964</a>
+        </div>
+      </div>
+
+      <a href="https://glory.rocks/" target="_blank">
+        discord @pawpulation or @paw777777
+      </a>
+
+      <a href="https://t.me/pupboi" target="_blank">
+        telegram @pupboi
+      </a>
     </section>
 
     <footer>
@@ -138,8 +152,8 @@ function drawSnow() {
 ===================== */
 let audioCtx, analyser, source, data;
 
-const baseSpeed = 0.6;   // normal slow snow
-const burstSpeed = 4.5; // fast on bass hit
+const baseSpeed = 0.6;
+const burstSpeed = 4.5;
 
 function setupBeat() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -155,7 +169,6 @@ function setupBeat() {
   function tick() {
     analyser.getByteFrequencyData(data);
 
-    // low frequencies only (bass)
     let bass = 0;
     for (let i = 0; i < 10; i++) bass += data[i];
     bass /= 10;
