@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>glory.rocks</title>
+  <meta name="description" content="hello" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- background -->
+  <div id="background"></div>
+
+  <!-- enter overlay -->
+  <div id="enter">
+    <span>click to enter</span>
+  </div>
+
+  <!-- audio -->
+  <audio id="bg-music" loop preload="auto"></audio>
+
+  <!-- snow -->
+  <canvas id="snow"></canvas>
+
+  <main class="container">
+    <section class="hero">
+      <img src="profile.png" alt="profile" class="avatar" />
+      <h1>glory</h1>
+      <p class="tagline">uhhhhhh hi</p>
+    </section>
+
+    <section class="about">
+      <h2>about</h2>
+      <p>young and dumb</p>
+    </section>
+
+    <section class="interests">
+      <h2></h2>
+      <ul>
+        <li>i dunno</li>
+      </ul>
+    </section>
+
+    <section class="links">
+      <h2>find me here</h2>
+
+      <div class="roblox-row">
+        <span class="platform-label">roblox</span>
+        <div class="roblox-links">
+          <a href="https://www.roblox.com/users/93730259/profile" target="_blank">93730259</a>
+          <a href="https://www.roblox.com/users/5533439599/profile" target="_blank">smoke</a>
+          <a href="https://www.roblox.com/users/1916867/profile" target="_blank">each</a>
+        </div>
+      </div>
+
+      <a href="https://glory.rocks/" target="_blank">
+        discord @insert_cheesy_bread
+      </a>
+
+      <a href="https://t.me/averi" target="_blank">
+        telegram @averi
+      </a>
+    </section>
+
+    <footer>
+      <p>glory.rocks</p>
+    </footer>
+  </main>
+
+<script>
+/* =====================
+   ELEMENTS
+===================== */
+const enter = document.getElementById("enter");
+const music = document.getElementById("bg-music");
+const mainContainer = document.querySelector(".container");
+const canvas = document.getElementById("snow");
+const ctx = canvas.getContext("2d");
+const backgroundDiv = document.getElementById("background");
+
+/* =====================
+   MUSIC
+===================== */
+const tracks = [
+  "music/song1.ogg","music/song2.ogg","music/song3.ogg","music/song4.ogg",
+  "music/song5.ogg","music/song6.ogg","music/song7.ogg","music/song8.ogg",
+  "music/song9.ogg","music/song10.ogg","music/song11.ogg"
+];
+music.src = tracks[Math.floor(Math.random() * tracks.length)];
+music.volume = 0.05;
+
+/* =====================
+   BACKGROUND
+===================== */
+const backgrounds = [
+  "backgrounds/bg1.png",
+  "backgrounds/bg2.png",
+  "backgrounds/bg3.png"
+];
+backgroundDiv.style.backgroundImage =
+  `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
+
+/* =====================
+   CANVAS RESIZE
+===================== */
+let w, h;
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+/* =====================
+   SNOW
+===================== */
+const flakes = Array.from({ length: 120 }, () => ({
+  x: Math.random() * w,
+  y: Math.random() * h + 10,
+  r: Math.random() * 3 + 1,
+  d: Math.random() * 0.6 + 0.3
+}));
+
+const fallSpeed = 0.6;
+
+function drawSnow() {
+  ctx.clearRect(0, 0, w, h);
+
+  flakes.forEach(f => {
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.fill();
+  });
+
+  flakes.forEach(f => {
+    f.y += f.d * fallSpeed;
+    if (f.y > h) {
+      f.y = -10;
+      f.x = Math.random() * w;
+    }
+  });
+
+  requestAnimationFrame(drawSnow);
+}
+
+/* =====================
+   CLICK TO ENTER
+===================== */
+canvas.style.opacity = 0;
+
+enter.addEventListener("click", async () => {
+  enter.classList.add("hide");
+
+  try {
+    await music.play();
+  } catch (e) {
+    console.log("Audio blocked:", e);
+  }
+
+  setTimeout(() => mainContainer.classList.add("show"), 300);
+  setTimeout(() => {
+    canvas.style.opacity = 1;
+    drawSnow();
+  }, 600);
+});
+</script>
+
+</body>
+</html>

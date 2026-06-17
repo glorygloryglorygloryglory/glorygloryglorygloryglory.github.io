@@ -1,0 +1,178 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+/* =====================
+   BASE
+===================== */
+body {
+  background: #08080f;
+  color: #e6e6f0;
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+/* =====================
+   BACKGROUND
+===================== */
+#background {
+  position: fixed;
+  inset: 0;
+  background-size: 100% 100%;
+  background-position: center;
+  filter: blur(14px);
+  z-index: 0;
+  transition: transform 0.08s ease;
+}
+/* =====================
+   SNOW
+===================== */
+#snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 1s ease;
+}
+/* =====================
+   CONTAINER
+===================== */
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 80px auto;
+  padding: 70px 40px;
+  text-align: center;
+  background: rgba(20, 20, 25, 0.22);
+  backdrop-filter: blur(22px);
+  border-radius: 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+.container.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* =====================
+   HERO
+===================== */
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+.tagline {
+  opacity: 0.9;
+  margin-top: 6px;
+}
+/* =====================
+   SECTIONS
+===================== */
+section {
+  margin-top: 28px;
+}
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+h2:empty {
+  display: none;
+}
+/* =====================
+   INTERESTS LIST
+===================== */
+.interests ul {
+  list-style: none;
+  text-align: center;
+}
+/* =====================
+   LINKS
+===================== */
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+.links a {
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+  font-weight: 500;
+}
+.links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1.5px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+.links a:hover::after {
+  width: 100%;
+}
+/* =====================
+   ROBLOX INLINE ROW
+===================== */
+.roblox-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.platform-label {
+  opacity: 0.7;
+  font-weight: 500;
+}
+.roblox-links {
+  display: inline-flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+/* =====================
+   FOOTER
+===================== */
+footer {
+  font-size: 0.75rem;
+  color: #fff;
+  margin-top: 40px;
+}
+/* =====================
+   ENTER OVERLAY
+===================== */
+#enter {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,20,40,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#enter.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+/* =====================
+   MOBILE
+===================== */
+@media (max-width: 480px) {
+  .container {
+    margin: 60px 14px;
+    padding: 50px 22px;
+  }
+}
