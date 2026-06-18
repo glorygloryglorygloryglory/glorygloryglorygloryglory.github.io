@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>glory.rocks</title>
+  <meta name="description" content="hello" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- background -->
+  <div id="background"></div>
+
+  <!-- enter overlay -->
+  <div id="enter">
+    <span>click to enter</span>
+  </div>
+
+  <!-- audio -->
+  <audio id="bg-music" preload="auto"></audio>
+
+  <!-- snow -->
+  <canvas id="snow"></canvas>
+
+  <main class="container">
+    <section class="hero">
+      <img src="profile.png" alt="profile" class="avatar" />
+      <h1>glory</h1>
+      <p class="tagline">uhhhhhh hi</p>
+    </section>
+
+    <section class="about">
+      <h2>about</h2>
+      <p>young and dumb</p>
+    </section>
+
+    <section class="interests">
+      <h2></h2>
+      <ul>
+        <li>i dunno</li>
+      </ul>
+    </section>
+
+    <section class="links">
+      <h2>find me here</h2>
+
+      <div class="roblox-row">
+        <span class="platform-label">roblox</span>
+        <div class="roblox-links">
+          <a href="https://www.roblox.com/users/93730259/profile" target="_blank">93730259</a>
+          <a href="https://www.roblox.com/users/5533439599/profile" target="_blank">smoke</a>
+          <a href="https://www.roblox.com/users/1916867/profile" target="_blank">each</a>
+        </div>
+      </div>
+
+      <a href="https://glory.rocks/" target="_blank">
+        discord @insert_cheesy_bread
+      </a>
+
+      <a href="https://t.me/averi" target="_blank">
+        telegram @averi
+      </a>
+    </section>
+
+    <footer>
+      <p>glory.rocks</p>
+    </footer>
+  </main>
+
+<script>
+/* =====================
+   ELEMENTS
+===================== */
+const enter = document.getElementById("enter");
+const music = document.getElementById("bg-music");
+const mainContainer = document.querySelector(".container");
+const canvas = document.getElementById("snow");
+const ctx = canvas.getContext("2d");
+const backgroundDiv = document.getElementById("background");
+
+/* =====================
+   MUSIC
+===================== */
+const tracks = [
+  "music/song1.mp3","music/song2.mp3","music/song3.mp3","music/song4.mp3",
+  "music/song5.mp3","music/song6.mp3","music/song7.mp3","music/song8.mp3"
+];
+
+const TARGET_VOLUME = 0.05;
+const FADE_MS = 1500; // length of fade out / fade in
+
+let currentTrackIndex = Math.floor(Math.random() * tracks.length);
+music.src = tracks[currentTrackIndex];
+music.volume = TARGET_VOLUME;
+
+function pickNextTrackIndex() {
+  if (tracks.length === 1) return 0;
+  let next;
+  do {
+    next = Math.floor(Math.random() * tracks.length);
+  } while (next === currentTrackIndex);
+  return next;
+}
+
+function fadeVolume(targetVolume, duration, onComplete) {
+  const startVolume = music.volume;
+  const startTime = performance.now();
+
+  function step() {
+    const elapsed = performance.now() - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    music.volume = startVolume + (targetVolume - startVolume) * t;
+
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else if (onComplete) {
+      onComplete();
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+function playNextTrack() {
+  currentTrackIndex = pickNextTrackIndex();
+  music.src = tracks[currentTrackIndex];
+  music.volume = 0;
+  music.play().catch(e => console.log("Audio blocked:", e));
+  fadeVolume(TARGET_VOLUME, FADE_MS);
+}
+
+// start fading out a bit before the track ends, then swap to the next one
+music.addEventListener("timeupdate", () => {
+  if (!music.duration) return;
+  const timeLeft = music.duration - music.currentTime;
+  if (timeLeft <= FADE_MS / 1000 && !music._fadingOut) {
+    music._fadingOut = true;
+    fadeVolume(0, FADE_MS);
+  }
+});
+
+music.addEventListener("ended", () => {
+  music._fadingOut = false;
+  playNextTrack();
+});
+
+/* =====================
+   BACKGROUND
+===================== */
+const backgrounds = [
+  "backgrounds/bg1.png",
+  "backgrounds/bg2.png",
+  "backgrounds/bg3.png"
+];
+backgroundDiv.style.backgroundImage =
+  `url('${backgrounds[Math.floor(Math.random() * backgrounds.length)]}')`;
+
+/* =====================
+   CANVAS RESIZE
+===================== */
+let w, h;
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+/* =====================
+   SNOW
+===================== */
+const flakes = Array.from({ length: 120 }, () => ({
+  x: Math.random() * w,
+  y: Math.random() * h + 10,
+  r: Math.random() * 3 + 1,
+  d: Math.random() * 0.6 + 0.3
+}));
+
+const fallSpeed = 0.6;
+
+function drawSnow() {
+  ctx.clearRect(0, 0, w, h);
+
+  flakes.forEach(f => {
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.fill();
+  });
+
+  flakes.forEach(f => {
+    f.y += f.d * fallSpeed;
+    if (f.y > h) {
+      f.y = -10;
+      f.x = Math.random() * w;
+    }
+  });
+
+  requestAnimationFrame(drawSnow);
+}
+
+/* =====================
+   CLICK TO ENTER
+===================== */
+canvas.style.opacity = 0;
+
+enter.addEventListener("click", async () => {
+  enter.classList.add("hide");
+
+  try {
+    await music.play();
+  } catch (e) {
+    console.log("Audio blocked:", e);
+  }
+
+  setTimeout(() => mainContainer.classList.add("show"), 300);
+  setTimeout(() => {
+    canvas.style.opacity = 1;
+    drawSnow();
+  }, 600);
+});
+</script>
+
+</body>
+</html>
